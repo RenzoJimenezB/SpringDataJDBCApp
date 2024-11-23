@@ -11,14 +11,13 @@ import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private static Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
-    @Autowired
     CategoryRepository categoryRepository;
 
-//    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-//        this.categoryRepository = categoryRepository;
-//    }
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public List<Category> findAll() throws Exception {

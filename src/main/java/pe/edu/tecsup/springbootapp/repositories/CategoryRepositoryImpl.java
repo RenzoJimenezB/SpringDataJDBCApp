@@ -10,9 +10,11 @@ import pe.edu.tecsup.springbootapp.entities.Category;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Process each row of the query
+ */
 class CategoryRowMapper implements RowMapper<Category> {
 
     @Override
@@ -29,18 +31,21 @@ class CategoryRowMapper implements RowMapper<Category> {
 
 @Repository
 public class CategoryRepositoryImpl implements CategoryRepository {
-    private static Logger log = LoggerFactory.getLogger(CategoryRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CategoryRepositoryImpl.class);
+
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public CategoryRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
-    public List<Category> findAll() throws Exception {
+    public List<Category> findAll() {
         log.info("CategoryRepositoryImpl.findAll()");
 
         String sql = "SELECT * FROM categorias";
 
-        List<Category> categories = jdbcTemplate.query(sql, new CategoryRowMapper());
-        return categories;
+        return jdbcTemplate.query(sql, new CategoryRowMapper());
     }
 }
