@@ -10,13 +10,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CategoryServiceTest {
-    private static Logger log = LoggerFactory.getLogger(CategoryServiceTest.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(CategoryServiceTest.class);
+
     @Autowired
     private CategoryService categoryService;
 
     @Test
     void findAll() throws Exception {
+        log.info("Testing CategoryService.findAll()");
         categoryService.findAll();
     }
 }
