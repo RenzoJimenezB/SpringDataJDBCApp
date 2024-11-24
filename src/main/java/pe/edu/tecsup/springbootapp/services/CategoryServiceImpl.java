@@ -2,7 +2,6 @@ package pe.edu.tecsup.springbootapp.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.edu.tecsup.springbootapp.entities.Category;
 import pe.edu.tecsup.springbootapp.repositories.CategoryRepository;
@@ -20,8 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findAll() throws Exception {
-        log.info("CategoryServiceImpl.findAll()");
+    public List<Category> getCategories() throws Exception {
+        log.info("CategoryServiceImpl.getCategories()");
 
         return categoryRepository.findAll();
     }

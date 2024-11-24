@@ -20,14 +20,14 @@ class CategoryServiceTest {
 
     @Test
     void findAll() throws Exception {
-        log.info("Testing CategoryService.findAll()");
+        log.info("Testing CategoryService.getCategories()");
 
-        List<Category> categories = categoryService.findAll();
+        List<Category> categories = categoryService.getCategories();
 
         assertNotNull(categories);
         assertFalse(categories.isEmpty());
         assertFalse(categories.contains(null));
-        
+
         categories.forEach(category -> System.out.println(category.getName()));
         categories.forEach(System.out::println);
     }
