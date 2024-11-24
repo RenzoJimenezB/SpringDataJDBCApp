@@ -100,4 +100,21 @@ public class Product {
     public void setState(Integer state) {
         this.state = state;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", categoryId='" + categoryId + '\'' +
+                ", category=" + category +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", image_name='" + image_name + '\'' +
+                ", image_type='" + image_type + '\'' +
+                ", image_size=" + image_size +
+                ", state=" + state +
+                '}';
+    }
 }
