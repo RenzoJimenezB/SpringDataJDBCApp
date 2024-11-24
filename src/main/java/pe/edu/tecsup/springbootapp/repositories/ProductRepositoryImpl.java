@@ -1,7 +1,6 @@
 package pe.edu.tecsup.springbootapp.repositories;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,9 +32,9 @@ class ProductRowMapper implements RowMapper<Product> {
     }
 }
 
+@Slf4j
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
-    private static final Logger log = LoggerFactory.getLogger(ProductRepositoryImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -45,11 +44,119 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public void save(Product product) {
+        log.info("ProductRepositoryImpl.save()");
+
+        String sql = """
+                INSERT INTO productos (categorias_id, nombre,
+                descripcion, precio, stock, estado,
+                imagen_nombre, imagen_tipo,
+                imagen_tamanio)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        jdbcTemplate.update(sql,
+                product.getCategoryId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStock(),
+                product.getState(),
+                product.getImage_name(),
+                product.getImage_type(),
+                product.getImage_size());
+    }
+
+    @Override
     public List<Product> findAll() {
         log.info("ProductRepositoryImpl.findAll()");
 
-        String sql = "SELECT * FROM productos";
+        String sql = """
+                SELECT
+                    p.id, p.categorias_id, p.nombre, p.descripcion, p.precio, p.stock,
+                    p.imagen_nombre, p.imagen_tipo, p.imagen_tamanio,
+                    p.creado, p.estado,
+                    c.nombre AS categorias_nombre
+                FROM productos p
+                INNER JOIN categorias c ON c.id = p.categorias_id
+                WHERE estado = 1
+                ORDER BY id
+                """;
 
-        return jdbcTemplate.query(sql, new ProductRowMapper());
+        List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper());
+
+        log.info("All products: {}", products);
+        return products;
+    }
+
+    @Override
+    public List<Product> findByName(String name) {
+        log.info("ProductRepositoryImpl.findByName()");
+
+        String sql = """
+                SELECT
+                    p.id, p.nombre, p.descripcion, p.precio, p.stock,
+                    p.imagen_nombre, p.imagen_tipo, p.imagen_tamanio,
+                    p.creado, p.estado, p.categorias_id,
+                    c.nombre AS categorias_nombre
+                FROM productos p
+                INNER JOIN categorias c ON c.id = p.categorias_id
+                WHERE p.estado = 1 AND upper(p.nombre) LIKE upper(?)
+                ORDER BY p.id
+                """;
+
+        Object[] parameters = new Object[]{name};
+        List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper(), parameters);
+
+        log.info("Products by name: {}", products);
+        return products;
+    }
+
+    @Override
+    public Product findById(Long id) {
+        log.info("ProductRepositoryImpl.findById()");
+
+        String sql = """
+                SELECT p.id, p.categorias_id, c.nombre AS
+                categorias_nombre, p.nombre, p.estado,
+                p.descripcion, p.precio, p.stock,
+                p.imagen_nombre, p.imagen_tipo, p.imagen_tamanio,
+                p.creado
+                FROM productos p
+                INNER JOIN categorias c ON c.id =
+                p.categorias_id
+                WHERE estado = 1 AND p.id = ?
+                """;
+
+        Object[] parameter = new Object[]{id};
+        Product product = jdbcTemplate.queryForObject(sql, new ProductRowMapper(), parameter);
+
+        log.info("Product: {}", product);
+        return product;
+    }
+
+    @Override
+    public void update(Long id, String productName) throws Exception {
+        log.info("ProductRepositoryImpl.update()");
+
+        String sql = """
+                UPDATE productos
+                SET nombre = ?
+                WHERE id = ?
+                """;
+
+        jdbcTemplate.update(sql, productName, id);
+    }
+
+    @Override
+    public void deleteById(Long id) throws Exception {
+        log.info("ProductRepositoryImpl.deleteById()");
+
+        String sql = """
+                DELETE FROM productos
+                WHERE id = ?
+                """;
+
+        jdbcTemplate.update(sql, id);
     }
 }

@@ -1,8 +1,7 @@
 package pe.edu.tecsup.springbootapp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pe.edu.tecsup.springbootapp.entities.Category;
@@ -11,9 +10,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @SpringBootTest
 class CategoryServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(CategoryServiceTest.class);
 
     @Autowired
     private CategoryService categoryService;

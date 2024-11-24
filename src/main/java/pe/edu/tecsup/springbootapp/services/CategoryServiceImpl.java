@@ -1,16 +1,15 @@
 package pe.edu.tecsup.springbootapp.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pe.edu.tecsup.springbootapp.entities.Category;
 import pe.edu.tecsup.springbootapp.repositories.CategoryRepository;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     CategoryRepository categoryRepository;
 

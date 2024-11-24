@@ -6,4 +6,14 @@ import java.util.List;
 
 public interface ProductService {
     List<Product> getProducts() throws Exception;
+
+    List<Product> findByName(String name) throws Exception;
+
+    Product findById(Long id) throws Exception;
+
+    void save(Product product) throws Exception;
+
+    void deleteById(Long id) throws Exception;
+
+    void update(Long id, String productName) throws Exception;
 }
