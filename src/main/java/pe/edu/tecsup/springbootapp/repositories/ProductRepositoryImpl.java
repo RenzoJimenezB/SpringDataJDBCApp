@@ -18,7 +18,7 @@ class ProductRowMapper implements RowMapper<Product> {
 
         Product product = new Product();
         product.setId(rs.getLong("id"));
-        product.setName(rs.getString("categorias_id"));
+        product.setCategoryId(rs.getLong("categorias_id"));
         product.setName(rs.getString("nombre"));
         product.setDescription(rs.getString("descripcion"));
         product.setPrice(rs.getDouble("precio"));
@@ -73,9 +73,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
         String sql = """
                 SELECT
-                    p.id, p.categorias_id, p.nombre, p.descripcion, p.precio, p.stock,
                     p.imagen_nombre, p.imagen_tipo, p.imagen_tamanio,
-                    p.creado, p.estado,
+                    p.id, p.categorias_id, p.nombre, p.descripcion,
+                    p.precio, p.stock, p.creado, p.estado,
                     c.nombre AS categorias_nombre
                 FROM productos p
                 INNER JOIN categorias c ON c.id = p.categorias_id
@@ -85,7 +85,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
         List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper());
 
-        log.info("All products: {}", products);
+        log.info("All products: ");
+        products.forEach(System.out::println);
+
         return products;
     }
 
@@ -105,10 +107,12 @@ public class ProductRepositoryImpl implements ProductRepository {
                 ORDER BY p.id
                 """;
 
-        Object[] parameters = new Object[]{name};
+        Object[] parameters = new Object[]{"%" + name + "%"};
         List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper(), parameters);
 
-        log.info("Products by name: {}", products);
+        log.info("Products with name '{}':", name);
+        products.forEach(System.out::println);
+
         return products;
     }
 
@@ -131,12 +135,44 @@ public class ProductRepositoryImpl implements ProductRepository {
         Object[] parameter = new Object[]{id};
         Product product = jdbcTemplate.queryForObject(sql, new ProductRowMapper(), parameter);
 
-        log.info("Product: {}", product);
+        log.info("Product with ID {}:", id);
+        System.out.println(product);
+
         return product;
     }
 
     @Override
-    public void update(Long id, String productName) throws Exception {
+    public List<Product> findByCategoryOrName(Long categoryId, String name) throws Exception {
+        log.info("ProductRepositoryImpl.findByCategoryOrName()");
+
+        String sql = """
+                SELECT
+                    p.id, p.nombre, p.descripcion, p.precio, p.stock,
+                    p.imagen_nombre, p.imagen_tipo, p.imagen_tamanio,
+                    p.creado, p.estado, p.categorias_id,
+                    c.nombre AS categorias_nombre
+                FROM productos p
+                INNER JOIN categorias c ON c.id = p.categorias_id
+                WHERE estado = 1
+                AND (? IS NULL OR p.categorias_id = ?)
+                AND (? IS NULL OR upper(p.nombre) LIKE upper(?))
+                """;
+
+        Object[] parameters = new Object[]{categoryId, categoryId, name, "%" + name + "%"};
+        List<Product> products = jdbcTemplate.query(sql, new ProductRowMapper(), parameters);
+
+        if (products.isEmpty()) {
+            throw new Exception("No products found for the given criteria");
+        }
+
+        log.info("Products found:");
+        products.forEach(System.out::println);
+
+        return products;
+    }
+
+    @Override
+    public void update(Long id, String productName) {
         log.info("ProductRepositoryImpl.update()");
 
         String sql = """
@@ -149,7 +185,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public void deleteById(Long id) throws Exception {
+    public void deleteById(Long id) {
         log.info("ProductRepositoryImpl.deleteById()");
 
         String sql = """

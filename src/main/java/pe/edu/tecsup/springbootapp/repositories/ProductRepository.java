@@ -13,6 +13,8 @@ public interface ProductRepository {
 
     Product findById(Long id) throws Exception;
 
+    List<Product> findByCategoryOrName(Long categoryId, String name) throws Exception;
+
     void update(Long id, String productName) throws
             Exception;
 

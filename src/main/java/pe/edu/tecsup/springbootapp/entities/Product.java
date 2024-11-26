@@ -21,5 +21,4 @@ public class Product {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createdAt;
-
 }

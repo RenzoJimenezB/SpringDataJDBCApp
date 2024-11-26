@@ -46,6 +46,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findByCategoryOrName(Long categoryId, String code) throws Exception {
+        log.info("ProductServiceImpl.findByCategoryOrName()");
+
+        return productRepository.findByCategoryOrName(categoryId, code);
+    }
+
+    @Override
     public void update(Long id, String productName) throws Exception {
         log.info("ProductServiceImpl.update()");
 
